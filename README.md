@@ -239,18 +239,44 @@ Available under `/manage` after login:
 
 ## Production Build
 
-```bash
-# Build the static SPA
-npm run build          # outputs client/dist
+This project is designed to run as a single Node app in production. The Express server
+serves the React build from `client/dist`, so Hostinger only needs one Node.js app for
+the website and API.
 
-# Serve the API (set NODE_ENV=production for secure cookies)
+```bash
+# Install dependencies once
+npm run install:all
+
+# Build the React SPA into client/dist
+npm run build
+
+# Start the Node app (the root prestart hook rebuilds the SPA first)
 NODE_ENV=production npm start
 ```
 
-Serve `client/dist` from any static host / CDN and point it at the API origin (set
-`CLIENT_ORIGIN` on the server and, if not same-origin, `VITE_API_BASE` at build time).
-For a single-origin deployment, place the API behind a reverse proxy that also serves
-the built SPA.
+For Hostinger, use the repository root as the Node app root and set the start command to
+`npm start`. The app expects the production env values from `server/.env`.
+
+Use these files as the production templates:
+
+- `server/.env.production.example` for the backend and domain settings
+- `client/.env.production.example` for the frontend build-time settings
+
+For `https://loansoffers.in/`, the important values are:
+
+- `CLIENT_ORIGIN=https://loansoffers.in`
+- `NODE_ENV=production`
+- `SESSION_SECRET` set to a long random secret
+
+If you keep the frontend and backend on the same Node app, leave `client`'s
+`VITE_API_BASE` blank so the browser uses same-origin `/api` requests.
+
+If you ever deploy the API separately, set `VITE_API_BASE` to that API origin before
+building the client.
+
+If you serve the app behind HTTPS, keep secure cookies enabled on the server by setting
+`NODE_ENV=production`. The server will automatically serve `client/dist` when it exists,
+and will still expose the JSON API under `/api`.
 
 ---
 

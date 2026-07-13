@@ -18,7 +18,13 @@ import analyticsRoutes from './routes/analytics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 4000;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const CLIENT_DIST_DIR = path.join(__dirname, '..', '..', 'client', 'dist');
+const CLIENT_INDEX_FILE = path.join(CLIENT_DIST_DIR, 'index.html');
+const HAS_CLIENT_BUILD = fs.existsSync(CLIENT_INDEX_FILE);
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -31,7 +37,18 @@ seedAll();
 const app = express();
 app.set('trust proxy', 1);
 
-app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || CLIENT_ORIGINS.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -65,6 +82,28 @@ app.use('/api/manage/analytics', analyticsRoutes);
 // Fallback 404 for unknown API routes.
 app.use('/api', (req, res) => res.status(404).json({ detail: 'Not found.' }));
 
+if (HAS_CLIENT_BUILD) {
+  app.use(express.static(CLIENT_DIST_DIR));
+  app.get('*', (req, res, next) => {
+    if (req.method !== 'GET') {
+      next();
+      return;
+    }
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      next();
+      return;
+    }
+    if (path.extname(req.path)) {
+      next();
+      return;
+    }
+    res.sendFile(CLIENT_INDEX_FILE);
+  });
+}
+
 app.listen(PORT, () => {
-  console.log(`loansoffers.in API running on http://localhost:${PORT}`);
+  console.log(`loansoffers.in app running on http://localhost:${PORT}`);
+  if (!HAS_CLIENT_BUILD) {
+    console.log('No client build found. Run npm run build before starting in production.');
+  }
 });

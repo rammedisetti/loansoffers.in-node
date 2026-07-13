@@ -1,4 +1,4 @@
-/** Thin fetch wrapper. Uses same-origin /api (Vite proxies to the backend). */
+/** Thin fetch wrapper. Uses same-origin /api in production and Vite proxy in dev. */
 
 const BASE = import.meta.env.VITE_API_BASE || '';
 
