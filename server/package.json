@@ -1,0 +1,23 @@
+{
+  "name": "loansoffers-server",
+  "version": "1.0.0",
+  "description": "Node/Express backend for loansoffers.in (migrated from Django)",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "seed": "node src/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "connect-sqlite3": "^0.9.15",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "loansoffers-node-react": "file:..",
+    "multer": "^2.0.0"
+  }
+}

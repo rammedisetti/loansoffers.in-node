@@ -1,0 +1,19 @@
+{
+  "name": "loansoffers-node-react",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node/Express + React migration of the loansoffers.in Django platform.",
+  "type": "module",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
+    "seed": "npm --prefix server run seed",
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
