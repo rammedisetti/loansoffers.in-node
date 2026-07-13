@@ -16,13 +16,15 @@ import leadRoutes from './routes/leads.js';
 import blogRoutes from './routes/blog.js';
 import analyticsRoutes from './routes/analytics.js';
 
+console.log("===== APP STARTING =====");
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 4000;
 const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
-const CLIENT_DIST_DIR = path.join(__dirname, '..', '..', 'client', 'dist');
+const CLIENT_DIST_DIR = path.join(__dirname, '..', 'client', 'dist');
 const CLIENT_INDEX_FILE = path.join(CLIENT_DIST_DIR, 'index.html');
 const HAS_CLIENT_BUILD = fs.existsSync(CLIENT_INDEX_FILE);
 
@@ -101,6 +103,7 @@ if (HAS_CLIENT_BUILD) {
   });
 }
 
+console.log("===== ABOUT TO LISTEN =====");
 app.listen(PORT, () => {
   console.log(`loansoffers.in app running on http://localhost:${PORT}`);
   if (!HAS_CLIENT_BUILD) {
