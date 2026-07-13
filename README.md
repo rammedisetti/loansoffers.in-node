@@ -245,17 +245,17 @@ the website and API.
 
 ```bash
 # Install dependencies once
-npm run install:all
+yarn install
 
 # Build the React SPA into client/dist
-npm run build
+yarn build
 
 # Start the Node app (the root prestart hook rebuilds the SPA first)
-NODE_ENV=production npm start
+NODE_ENV=production yarn start
 ```
 
-For Hostinger, use the repository root as the Node app root and set the start command to
-`npm start`. The app expects the production env values from `server/.env`.
+For Hostinger or Render, use the repository root as the Node app root and set the start
+command to `yarn start`.
 
 Use these files as the production templates:
 
@@ -277,6 +277,10 @@ building the client.
 If you serve the app behind HTTPS, keep secure cookies enabled on the server by setting
 `NODE_ENV=production`. The server will automatically serve `client/dist` when it exists,
 and will still expose the JSON API under `/api`.
+
+Render note: the root `package.json` is configured as a Yarn workspace, so a single
+`yarn install` installs both the client and server dependencies and avoids the missing
+`vite` error you saw.
 
 ---
 
